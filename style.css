@@ -1,0 +1,253 @@
+/* --- Reset --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- Design tokens --- */
+:root {
+  --bg: #fdfbf7;            /* warm off-white */
+  --text-primary: #1c1c1c;
+  --text-secondary: #4a4a4a;
+  --text-muted: #7c7c7c;
+  --accent: #2f5f6f;
+
+  /* Serif stack for bio only */
+  --serif: "Source Serif 4", "Iowan Old Style", "Charter",
+           "Georgia", serif;
+}
+
+/* --- Base --- */
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+  background: var(--bg);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* --- Layout --- */
+.container {
+  max-width: 58ch;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+/* --- Header --- */
+.header {
+  margin-bottom: 2.2rem;
+}
+
+h1 {
+  font-weight: 700;
+  font-size: clamp(3.8rem, 10vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+}
+
+.accent-dot {
+  color: #ff7a2f;
+  font-weight: 700;
+}
+
+.role {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* --- Primary paragraph (serif only here) --- */
+.bio {
+  font-family: var(--serif);
+  font-size: 1.06rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  letter-spacing: -0.003em;
+  margin-bottom: 2.1rem;
+}
+
+.bio .tech {
+  display: inline-block;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-left: 0.3ch;
+  letter-spacing: 0.02em;
+}
+
+/* --- Editorial sections --- */
+.section {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.52;
+  margin-bottom: 1.9rem;
+}
+
+/* --- Inline labels --- */
+.inline-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-muted);
+  line-height: 1;
+  margin-bottom: 0.55rem;
+}
+
+/* --- Section body --- */
+.section-body {
+  display: block;
+}
+
+/* --- Links --- */
+.links {
+  display: flex;
+  gap: 1.6rem;
+  font-size: 0.9rem;
+  margin-top: 2.2rem;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(47, 95, 111, 0.35);
+  padding-bottom: 0.08rem;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+
+a:hover {
+  color: var(--text-primary);
+  border-bottom-color: #ff7a2f;
+}
+
+a:focus-visible {
+  outline: 2px solid #ff7a2f;
+  outline-offset: 3px;
+}
+
+/* --- Updated / meta --- */
+.meta {
+  margin-top: 2.6rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* --- Dark mode --- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --text-primary: #eeeeea;
+    --text-secondary: #cfcfca;
+    --text-muted: #9b9b95;
+    --accent: #7fa7b3;
+  }
+
+  a {
+    border-bottom-color: rgba(127, 167, 179, 0.35);
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  h1 {
+    font-size: clamp(3rem, 12vw, 5rem);
+  }
+}
+
+/* --- Print --- */
+@media print {
+  :root {
+    --bg: #ffffff;
+    --text-primary: #000000;
+    --text-secondary: #111111;
+    --text-muted: #444444;
+    --accent: #000000;
+  }
+
+  body {
+    background: none;
+    color: var(--text-primary);
+    padding: 0;
+    min-height: auto;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  .container {
+    max-width: none;
+  }
+
+  .accent-dot {
+    display: none;
+  }
+
+  .header {
+    margin-bottom: 1.4rem;
+  }
+
+  h1 {
+    font-size: 28pt;
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
+
+  .bio {
+    font-family: var(--serif);
+    font-size: 11.5pt;
+    line-height: 1.55;
+    margin-bottom: 1.4rem;
+  }
+
+  .bio .tech {
+    display: inline;
+    font-size: 10pt;
+  }
+
+  .section {
+    margin-bottom: 1.2rem;
+  }
+
+  .inline-label {
+    font-size: 8pt;
+    letter-spacing: 0.14em;
+    color: #555;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    border: none;
+  }
+
+  a::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #555;
+    word-break: break-all;
+  }
+
+  .links,
+  .meta {
+    display: none;
+  }
+
+  p,
+  h1 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .section {
+    page-break-inside: avoid;
+  }
+}
