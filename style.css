@@ -52,6 +52,14 @@ h1 {
   letter-spacing: 0.01em;
 }
 
+hr {
+  border: none;
+  height: 1px;           /* line thickness */
+  background: #ccc;      /* line color */
+  margin: 2rem 0;        /* spacing above and below */
+}
+
+
 .accent-dot {
   color: #ff7a2f;
   font-weight: 700;
@@ -112,6 +120,7 @@ a:focus-visible {
   outline: 2px solid #ff7a2f;
   outline-offset: 3px;
 }
+
 
 /* --- Meta --- */
 .meta {
