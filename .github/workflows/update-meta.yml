@@ -1,0 +1,48 @@
+name: Update HTML Meta
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-meta:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Gather metadata
+        id: meta
+        run: |
+          # Get short commit hash
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          # Get current date/time
+          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+          # Get current year
+          YEAR=$(date +"%Y")
+          # Increment version number based on run number
+          VERSION="v1.${GITHUB_RUN_NUMBER}"
+          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
+          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+          echo "YEAR=$YEAR" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Update meta in HTML
+        run: |
+          HTML_FILE="index.html" # adjust if your HTML file has a different name
+          META_LINE="<p class=\"meta\">$VERSION · $TIMESTAMP · $COMMIT_HASH · $YEAR</p>"
+          # Replace existing <p class="meta">...</p> with new meta line
+          sed -i "s|<p class=\"meta\">.*</p>|$META_LINE|" "$HTML_FILE"
+
+      - name: Commit and push changes
+        run: |
+          git add index.html
+          git commit -m "Auto-update meta: $VERSION $COMMIT_HASH $TIMESTAMP" || echo "No changes to commit"
+          git push
