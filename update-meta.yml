@@ -10,25 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2️⃣ Set up Git
       - name: Set up Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      # 3️⃣ Gather metadata
       - name: Gather metadata
         id: meta
         run: |
-          # Get short commit hash
+          # Short commit hash
           COMMIT_HASH=$(git rev-parse --short HEAD)
-          # Get current date/time
+          # Current timestamp
           TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-          # Get current year
+          # Current year
           YEAR=$(date +"%Y")
-          # Increment version number based on run number
+          # Auto-incremented version based on GitHub run number
           VERSION="v1.${GITHUB_RUN_NUMBER}"
+
           echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
           echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
           echo "YEAR=$YEAR" >> $GITHUB_ENV
@@ -36,12 +40,20 @@ jobs:
 
       - name: Update meta in HTML
         run: |
-          HTML_FILE="index.html" # adjust path if needed
+          HTML_FILE="index.html"
+          # Build metadata
+          VERSION="v1.${GITHUB_RUN_NUMBER}"
+          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          YEAR=$(date +"%Y")
           META_LINE="<p class=\"meta\">$VERSION · $TIMESTAMP · $COMMIT_HASH · $YEAR</p>"
-          perl -0777 -pi -e "s|<p class=\"meta\">.*?</p>|$META_LINE|s" "$HTML_FILE"
-
+          # Replace any existing <p class="meta"> ... </p>
+          perl -0777 -i -pe 's|<p class="meta">.*?</p>|'"$META_LINE"'|s' "$HTML_FILE"
+      
+      # 5️⃣ Commit and push changes
       - name: Commit and push changes
         run: |
           git add index.html
-          git commit -m "Auto-update meta: $VERSION $COMMIT_HASH $TIMESTAMP" || echo "No changes to commit"
+          # Commit only if there are changes
+          git diff --cached --quiet || git commit -m "Auto-update meta: $VERSION $COMMIT_HASH $TIMESTAMP"
           git push
