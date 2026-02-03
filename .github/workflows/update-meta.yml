@@ -36,10 +36,9 @@ jobs:
 
       - name: Update meta in HTML
         run: |
-          HTML_FILE="index.html" # adjust if your HTML file has a different name
+          HTML_FILE="index.html" # adjust path if needed
           META_LINE="<p class=\"meta\">$VERSION · $TIMESTAMP · $COMMIT_HASH · $YEAR</p>"
-          # Replace existing <p class="meta">...</p> with new meta line
-          sed -i "s|<p class=\"meta\">.*</p>|$META_LINE|" "$HTML_FILE"
+          perl -0777 -pi -e "s|<p class=\"meta\">.*?</p>|$META_LINE|s" "$HTML_FILE"
 
       - name: Commit and push changes
         run: |
