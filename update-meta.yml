@@ -17,7 +17,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Update meta in HTML (Node)
+      - name: Update meta in HTML
         run: |
           node -e "
             const fs = require('fs');
@@ -27,8 +27,8 @@ jobs:
             const timestamp = new Date().toISOString().replace('T',' ').split('.')[0];
             const commit = '${{ github.sha }}'.slice(0,7);
             const year = new Date().getFullYear();
-            const metaLine = `<p class=\"meta\">${version} · ${timestamp} · ${commit} · ${year}</p>`;
-            html = html.replace(/<p class=\"meta\">.*?<\/p>/s, metaLine);
+            const meta = `${version} · ${timestamp} · ${commit} · ${year}`;
+            html = html.replace(/<span id=\"meta-data\">.*?<\/span>/s, `<span id=\"meta-data\">${meta}</span>`);
             fs.writeFileSync(file, html);
           "
 
