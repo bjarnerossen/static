@@ -103,6 +103,31 @@ hr {
   margin-top: 2rem;
 }
 
+.now-capsules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem; /* spacing between capsules */
+  margin-top: 0.5rem;
+}
+
+.now-capsules span {
+  background-color: transparent;
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  border-bottom: 2px solid rgba(255, 122, 47, 0.3);
+  transition: transform 150ms ease, border-color 150ms ease;
+}
+
+.now-capsules span:hover {
+  border-color: #ff7a2f;
+  transform: translateY(-1px);
+}
+
+
+
 a {
   color: var(--accent);
   text-decoration: none;
