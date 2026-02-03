@@ -10,50 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      # 2️⃣ Set up Git
       - name: Set up Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 3️⃣ Gather metadata
-      - name: Gather metadata
-        id: meta
+      - name: Update meta in HTML (Node)
         run: |
-          # Short commit hash
-          COMMIT_HASH=$(git rev-parse --short HEAD)
-          # Current timestamp
-          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-          # Current year
-          YEAR=$(date +"%Y")
-          # Auto-incremented version based on GitHub run number
-          VERSION="v1.${GITHUB_RUN_NUMBER}"
+          node -e "
+            const fs = require('fs');
+            const file = 'index.html';
+            let html = fs.readFileSync(file, 'utf8');
+            const version = 'v1.${{ github.run_number }}';
+            const timestamp = new Date().toISOString().replace('T',' ').split('.')[0];
+            const commit = '${{ github.sha }}'.slice(0,7);
+            const year = new Date().getFullYear();
+            const metaLine = `<p class=\"meta\">${version} · ${timestamp} · ${commit} · ${year}</p>`;
+            html = html.replace(/<p class=\"meta\">.*?<\/p>/s, metaLine);
+            fs.writeFileSync(file, html);
+          "
 
-          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
-          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
-          echo "YEAR=$YEAR" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Update meta in HTML
-        run: |
-          HTML_FILE="index.html"
-          # Build metadata
-          VERSION="v1.${GITHUB_RUN_NUMBER}"
-          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-          COMMIT_HASH=$(git rev-parse --short HEAD)
-          YEAR=$(date +"%Y")
-          META_LINE="<p class=\"meta\">$VERSION · $TIMESTAMP · $COMMIT_HASH · $YEAR</p>"
-          # Replace any existing <p class="meta"> ... </p>
-          perl -0777 -i -pe 's|<p class="meta">.*?</p>|'"$META_LINE"'|s' "$HTML_FILE"
-      
-      # 5️⃣ Commit and push changes
       - name: Commit and push changes
         run: |
           git add index.html
-          # Commit only if there are changes
-          git diff --cached --quiet || git commit -m "Auto-update meta: $VERSION $COMMIT_HASH $TIMESTAMP"
-          git push
+          git diff --cached --quiet || git commit -m "Auto-update meta"
+          git push origin HEAD:main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
